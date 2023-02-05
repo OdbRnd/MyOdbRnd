@@ -20,18 +20,13 @@ public class Main {
         input=input.replaceAll("\\s+","");
 // перевести римские цифры в верхний регистр
         input=input.toUpperCase();
-// удалить все пробелы
-        if (input.indexOf('+')>=0) {
-            nIndOp=input.indexOf('+');
-        }else if (input.indexOf('-')>=0) {
-            nIndOp=input.indexOf('-');
-        }else if (input.indexOf('/')>=0) {
-            nIndOp=input.indexOf('/');
-        }else if (input.indexOf('*')>=0) {
-            nIndOp=input.indexOf('*');
-        }
 
-        if (nIndOp>=0) {
+        if (input.lastIndexOf('+')>2) { nIndOp=input.lastIndexOf('+');}
+        else if (input.lastIndexOf('-')>2) { nIndOp=input.lastIndexOf('-');}
+        else if (input.lastIndexOf('/')>2) { nIndOp=input.lastIndexOf('/');}
+        else if (input.lastIndexOf('*')>2) { nIndOp=input.lastIndexOf('*');}
+
+        if (nIndOp>0 && nIndOp<3) {
 
             cCh=input.charAt(nIndOp);
             sOut=input.substring(0,nIndOp);
@@ -44,14 +39,16 @@ public class Main {
             }
 //            System.out.println(sOut+" "+nNum1);
             sOut=input.substring(nIndOp+1,input.length());
-            if(isNumeric(sOut)){
-                cCh2='A';
-                nNum2=Float.parseFloat(sOut);
-            }else {
-                cCh2='R';
-                nNum2=rimToArab(sOut);
+            if (nNum1>=0) {
+                if (isNumeric(sOut)) {
+                    cCh2 = 'A';
+                    nNum2 = Float.parseFloat(sOut);
+                } else {
+                    cCh2 = 'R';
+                    nNum2 = rimToArab(sOut);
+                }
             }
-//            System.out.println(sOut+" "+nNum2);
+//            System.out.println(sOut+" "+nNum2+cCh1+cCh2);
 
 
             if  ( ((cCh1=='A')&&(cCh2=='A')) || ((cCh1=='R')&&(cCh2=='R')) ) {
@@ -73,27 +70,27 @@ public class Main {
                 if (cCh1=='R'&& cCh2=='R') {
                     if (nNum1>0) {
                         sOut = arabToRim((int) nNum1);
-                    } else {
-                        sOut="ОШИБКА: Данное исчисление не имеет отрицательных чисел !!! ";
-                    }
+                    } else {  sOut="ОШИБКА:В римской системе нет отрицательных чисел !!!"; }
                 } else {
                     sOut = String.valueOf(nNum1);
                 }
-            } else {sOut="ОШИБКА: Используются одновременно разные системы счисления !!!";}
-
-        } else if (cCh==' ') {
-            sOut = "ОШИБКА: Cтрока не является математической операцией !!!";
-        } else {
-            sOut="ОШИБКА: Такой арифметической операции нет в поставленной задаче !!!";        }
+            } else { sOut="";}
+        } else if (cCh==' ' && nIndOp<3) { sOut = "ОШИБКА: Cтрока не является математической операцией !!!";
+        } else {  sOut="ОШИБКА: формат математической операции не удовлетворяет заданию - два операнда и один оператор (+, -, /, *) !!!"; }
         return sOut;
     }
 // проверка на число boolean(String sStr)
    public static boolean isNumeric(String str) {
-      try {
-         Float.parseFloat(str);
-         return true;
-      } catch (NumberFormatException e) {
-          return false;}
+       // для проверки диапазона
+        try {
+           if (Integer.parseInt(str) > 10 || Integer.parseInt(str) < 0) {
+               System.out.println("ОШИБКА: диапазон вводимых чисел от 1 до 10 или от I до X !!!");
+               return false;
+           }
+           return true;
+       } catch (NumberFormatException e) {
+           return false;
+       }
    }
 // римские цифры в арабские
     public static int rimToArab(String sStr) {
